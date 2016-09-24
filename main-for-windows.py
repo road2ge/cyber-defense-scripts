@@ -10,31 +10,37 @@ username = os.getenv('username')
 os.system('netsh advfirewall set allprofiles state on')
 #Turn on UAC
 os.system('C:\\Windows\\System32\\cmd.exe /k %windir%\\System32\\reg.exe ADD HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v EnableLUA /t REG_DWORD /d 1 /f')
-temp_users = check_output('net user')
 # There is a lot of whitespace in this.  I need to find a way to remove it, but I'm on Ubuntu right now
 os.system('secedit /import /db secedit.sdb /cfg asdf.inf /overwrite /log MyLog.txt')
+
 users = []
 alpha = 'abcdefghijklmnopqrstuvwxyz'
 numbers = '1234567890'
 alpha_numeric = alpha + alpha.upper() + numbers
 incoming_user = ''
-prohibited_list = '\"/\\ []:;|=,+*?<>'
+temp_users = check_output('net user')
+times_through = 1
+# " / \ [ ] : ; | = , + * ? < > are the characters not allowed in usernames
 for character in temp_users:
-    if character not in prohibited_list:
-        pass
-    elif character in alpha_numeric:
-        
-'''for user in temp_users:
-    if '\\' not in user:
-        users.append(user)
+    if character in alpha_numeric or character in "-#\'.!@$%^&()}{":
+    	incoming_user += character
+    elif len(incoming_user) > 0:
+    	if times_through > 5:
+           users.append(incoming_user)
+    	incoming_user = ''
+        times_through += 1
+
+users = users[0:len(users)-4]
+
+'''
 allowed_users = input('What users are allowed? ')
 allowed_users = allowed_users.split(',')
 allowed_users.append(username)
-for user in allowed_users:
+for user in users:
     if user not in allowed_users:
         os.system('net user ' + user + ' /remove')
 for user in allowed_users:
-    if user not in allowed_users:
+    if user not in users:
         os.system('net user ' + user + ' /add')
 allowed_admins = input('What admins are allowed? ')
 allowed_admins = allowed_admins.split(',')
