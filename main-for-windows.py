@@ -19,25 +19,27 @@ numbers = '1234567890'
 alpha_numeric = alpha + alpha.upper() + numbers
 incoming_user = ''
 temp_users = check_output('net user')
+times_through = 1
 for character in temp_users:
-    if character in alpha_numeric:
+    if character in alpha_numeric or character in '-#':
     	incoming_user += character
     elif len(incoming_user) > 0:
-    	users.append(incoming_user)
+    	if times_through > 5:
+           users.append(incoming_user)
     	incoming_user = ''
+        times_through += 1
 
+users = users[0:len(users)-4]
 
-'''for user in temp_users:
-    if '\\' not in user:
-        users.append(user)
+'''
 allowed_users = input('What users are allowed? ')
 allowed_users = allowed_users.split(',')
 allowed_users.append(username)
-for user in allowed_users:
+for user in users:
     if user not in allowed_users:
         os.system('net user ' + user + ' /remove')
 for user in allowed_users:
-    if user not in allowed_users:
+    if user not in users:
         os.system('net user ' + user + ' /add')
 allowed_admins = input('What admins are allowed? ')
 allowed_admins = allowed_admins.split(',')
