@@ -11,7 +11,7 @@ os.system('netsh advfirewall set allprofiles state on')
 #Turn on UAC
 os.system('C:\\Windows\\System32\\cmd.exe /k %windir%\\System32\\reg.exe ADD HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v EnableLUA /t REG_DWORD /d 1 /f')
 # There is a lot of whitespace in this.  I need to find a way to remove it, but I'm on Ubuntu right now
-os.system('secedit /import /db secedit.sdb /cfg asdf.inf /overwrite /log MyLog.txt')
+os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
 
 users = []
 alpha = 'abcdefghijklmnopqrstuvwxyz'
