@@ -29,11 +29,9 @@ for character in temp_users:
            users.append(incoming_user)
     	incoming_user = ''
         times_through += 1
-
 users = users[0:len(users)-4]
 
-
-allowed_users = input('What users are allowed? ')
+allowed_users = input('What users are allowed? You don\'t have to include yourself. ')
 allowed_users = allowed_users.split(',')
 allowed_users.append(username)
 for user in users:
@@ -42,7 +40,7 @@ for user in users:
         cmd_remove
     if user not in users:
         os.system('net user ' + user +  'p@55w0rd /add')
-allowed_admins = input('What admins are allowed? ')
+allowed_admins = input('What admins are allowed? Don\'t include yourself again. ')
 allowed_admins = allowed_admins.split(',')
 allowed_admins.append(username)
 for user in allowed_admins:
@@ -51,4 +49,3 @@ for user in allowed_users:
     if user not in allowed_admins:
         cmd_remove_admin = os.system('net localgroup Administrators ' + user + ' /remove')
         cmd_remove_admin
-        
