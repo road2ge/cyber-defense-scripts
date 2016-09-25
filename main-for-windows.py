@@ -49,3 +49,20 @@ for user in allowed_users:
     if user not in allowed_admins:
         cmd_remove_admin = os.system('net localgroup Administrators ' + user + ' /remove')
         cmd_remove_admin
+# A whole bunch of registry lines.  I don't care if some of these are in the cyber.inf secpol import, sometimes
+# When I'm testing that, things don't go write... Oh well, I'd rather have a bunch of os.system calls and duplicate entries
+# Than have me think something happened when it didn't.
+# Automagic updates
+os.system('reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f')
+# Let's turn off that awkward thing called RDP
+os.system('reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 1 /f')
+os.system('reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f')
+# Clean DNS cache, cause why not
+os.system('ipconfig /flushdns')
+# Disable leh autorun
+os.system('reg ADD HKCU\SYSTEM\CurrentControlSet\Services\CDROM /v AutoRun /t REG_DWORD /d 1 /f')
+# Disable built-in accounts
+os.system('net user Guest /active:NO')
+os.system('net user Administrator /active:NO')
+# Clear page file on shutdown
+os.system('reg ADD "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v ClearPageFileAtShutdown /t REG_DWORD /d 1 /f')
