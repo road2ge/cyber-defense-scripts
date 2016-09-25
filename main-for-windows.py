@@ -52,6 +52,8 @@ for user in allowed_users:
 # A whole bunch of registry lines.  I don't care if some of these are in the cyber.inf secpol import, sometimes
 # When I'm testing that, things don't go write... Oh well, I'd rather have a bunch of os.system calls and duplicate entries
 # Than have me think something happened when it didn't.
+# Password policy automagic
+os.system('net accounts /FORCELOGOFF:30 /MINPWLEN:8 /MAXPWAGE:30 /MINPWAGE:10UNIQUEPW:5')
 # Automagic updates
 os.system('reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f')
 # Let's turn off that awkward thing called RDP
