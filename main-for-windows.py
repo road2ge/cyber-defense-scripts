@@ -20,8 +20,9 @@ alpha_numeric = alpha + alpha.upper() + numbers
 incoming_user = ''
 temp_users = check_output('net user')
 times_through = 1
+# " / \ [ ] : ; | = , + * ? < > are the characters not allowed in usernames
 for character in temp_users:
-    if character in alpha_numeric or character in '-#':
+    if character in alpha_numeric or character in "-#\'.!@$%^&()}{":
     	incoming_user += character
     elif len(incoming_user) > 0:
     	if times_through > 5:
