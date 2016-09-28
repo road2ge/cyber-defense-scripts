@@ -39,7 +39,6 @@ if __name__ == '__main__':
 from subprocess import call
 from subprocess import check_output
 import os
-import sys
 username = os.getenv('username')
 # The firewall needs to be enabled.  This is here because I hate Control Panel.
 os.system('netsh advfirewall set allprofiles state on')
@@ -68,9 +67,10 @@ users = users[0:len(users)-4]
 allowed_users = input('What users are allowed? You don\'t have to include yourself. ')
 allowed_users = allowed_users.split(',')
 allowed_users.append(username)
+print(users + 'Are the current users on this machine.')
 for user in users:
     if user not in allowed_users:
-        cmd_remove = check_output('net user ' + user + ' /delete')
+        cmd_remove = check_output('net user ' + user + 'p@55w0rd /delete')
         cmd_remove
     if user not in users:
         os.system('net user ' + user +  'p@55w0rd /add')
@@ -78,7 +78,7 @@ allowed_admins = input('What admins are allowed? Don\'t include yourself again. 
 allowed_admins = allowed_admins.split(',')
 allowed_admins.append(username)
 for user in allowed_admins:
-    os.system('net localgroup Administrators ' + user + ' p@55w0rd /add')
+    os.system('net localgroup Administrators ' + user + ' /add')
 for user in allowed_users:
     if user not in allowed_admins:
         cmd_remove_admin = os.system('net localgroup Administrators ' + user + ' /remove')
@@ -87,7 +87,7 @@ for user in allowed_users:
 # When I'm testing that, things don't go write... Oh well, I'd rather have a bunch of os.system calls and duplicate entries
 # Than have me think something happened when it didn't.
 # Password policy automagic
-os.system('net accounts /FORCELOGOFF:30 /MINPWLEN:8 /MAXPWAGE:30 /MINPWAGE:10UNIQUEPW:5')
+os.system('net accounts /FORCELOGOFF:30 /MINPWLEN:8 /MAXPWAGE:30 /MINPWAGE:10 UNIQUEPW:5')
 print('Chaning password policies and such...')
 # Automagic updates
 os.system('reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f')
