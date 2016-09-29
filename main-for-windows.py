@@ -42,9 +42,6 @@ from subprocess import check_output
 import os
 
 username = os.getenv('username')
-
-
-
 users = []
 alpha = 'abcdefghijklmnopqrstuvwxyz'
 numbers = '1234567890'
@@ -130,3 +127,18 @@ os.system('netsh advfirewall set allprofiles state on')
 print('UAC = triggered')
 os.system('C:\\Windows\\System32\\cmd.exe /k %windir%\\System32\\reg.exe ADD HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v EnableLUA /t REG_DWORD /d 1 /f')
 os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
+
+############################# Search for media files #############################
+def find_all(name, path):
+    result = []
+    for root, dirs, files in os.scandir(path):
+        if name in files:
+            result.append(os.path.join(root, name))
+    return result
+media_list = [find_all('mp3', 'C:\\')]
+media_list += find_all('wav', 'C:\\')
+media_list += find_all('mp4', 'C:\\')
+media_list += find_all('wmv', 'C:\\')
+text_file = open("Output.txt", "w")
+text_file.write(media_list)
+text_file.close()
