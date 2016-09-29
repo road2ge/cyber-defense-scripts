@@ -24,8 +24,6 @@ def run_as_admin(argv=None, debug=False):
     if int(ret) <= 32:
         return False
     return None
-
-
 if __name__ == '__main__':
     ret = run_as_admin()
     if ret is True:
@@ -36,12 +34,16 @@ if __name__ == '__main__':
         raw_input('Press ENTER to exit.')
     else:
         print 'Error(ret=%d): cannot elevate privilege.' % (ret, )
+
 from subprocess import call
 from subprocess import check_output
 import os
+
 username = os.getenv('username')
+
 # The firewall needs to be enabled.  This is here because I hate Control Panel.
 os.system('netsh advfirewall set allprofiles state on')
+
 #Turn on UAC
 os.system('C:\\Windows\\System32\\cmd.exe /k %windir%\\System32\\reg.exe ADD HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v EnableLUA /t REG_DWORD /d 1 /f')
 os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
@@ -54,6 +56,8 @@ incoming_user = ''
 temp_users = check_output('net user')
 times_through = 1
 # " / \ [ ] : ; | = , + * ? < > are the characters not allowed in usernames
+
+# Get a list of all users on the system
 for character in temp_users:
     if character in alpha_numeric or character in "-#\'.!@$%^&()}{":
         incoming_user += character
@@ -64,14 +68,14 @@ for character in temp_users:
         times_through += 1
 users = users[0:len(users)-4]
 
+############################# User Management #############################
 allowed_users = input('What users are allowed? You don\'t have to include yourself. ')
 allowed_users = allowed_users.split(',')
 allowed_users.append(username)
 print(users + 'Are the current users on this machine.')
 for user in users:
     if user not in allowed_users:
-        cmd_remove = check_output('net user ' + user + 'p@55w0rd /delete')
-        cmd_remove
+        os.system('net user ' + user + ' /delete')
     if user not in users:
         os.system('net user ' + user +  'p@55w0rd /add')
 allowed_admins = input('What admins are allowed? Don\'t include yourself again. ')
@@ -81,7 +85,7 @@ for user in allowed_admins:
     os.system('net localgroup Administrators ' + user + ' /add')
 for user in allowed_users:
     if user not in allowed_admins:
-        cmd_remove_admin = os.system('net localgroup Administrators ' + user + ' /remove')
+        cmd_remove_admin = os.system('net localgroup Administrators ' + user + ' /delete')
         cmd_remove_admin
 # A whole bunch of registry lines.  I don't care if some of these are in the cyber.inf secpol import, sometimes
 # When I'm testing that, things don't go write... Oh well, I'd rather have a bunch of os.system calls and duplicate entries
