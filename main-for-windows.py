@@ -1,6 +1,7 @@
 # This script is actually for Cyber Security on Windows 7.  Should mostly work
 # for Windows 8 and 10 too.  I just absolutely hate using Windows 8 and refuse
 # to test it on any Windows 8 machine.
+############################# Check for proper priveleges #############################
 import sys
 import ctypes
 
@@ -35,18 +36,14 @@ if __name__ == '__main__':
     else:
         print 'Error(ret=%d): cannot elevate privilege.' % (ret, )
 
+
 from subprocess import call
 from subprocess import check_output
 import os
 
 username = os.getenv('username')
 
-# The firewall needs to be enabled.  This is here because I hate Control Panel.
-os.system('netsh advfirewall set allprofiles state on')
 
-#Turn on UAC
-os.system('C:\\Windows\\System32\\cmd.exe /k %windir%\\System32\\reg.exe ADD HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v EnableLUA /t REG_DWORD /d 1 /f')
-os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
 
 users = []
 alpha = 'abcdefghijklmnopqrstuvwxyz'
@@ -56,7 +53,6 @@ incoming_user = ''
 temp_users = check_output('net user')
 times_through = 1
 # " / \ [ ] : ; | = , + * ? < > are the characters not allowed in usernames
-
 # Get a list of all users on the system
 for character in temp_users:
     if character in alpha_numeric or character in "-#\'.!@$%^&()}{":
@@ -91,9 +87,8 @@ for user in allowed_users:
     if user not in allowed_admins:
         cmd_remove_admin = os.system('net localgroup Administrators ' + user + ' /delete')
         cmd_remove_admin
-# A whole bunch of registry lines.  I don't care if some of these are in the cyber.inf secpol import, sometimes
-# When I'm testing that, things don't go write... Oh well, I'd rather have a bunch of os.system calls and duplicate entries
-# Than have me think something happened when it didn't.
+
+############################# Registry keys and such #############################
 # Password policy automagic
 print('Chaning password policies and such...')
 os.system('net accounts /FORCELOGOFF:30 /MINPWLEN:8 /MAXPWAGE:30 /MINPWAGE:10 UNIQUEPW:5')
@@ -128,3 +123,10 @@ os.system('reg add "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" 
 print('Auditing now on! Yay!!!!')
 os.system('auditpol /set /category:* /success:enable')
 os.system('auditpol /set /category:* /failure:enable')
+# Enable firewall
+print('The firewall torch has been passed on to you')
+os.system('netsh advfirewall set allprofiles state on')
+# Turn on UAC
+print('UAC = triggered')
+os.system('C:\\Windows\\System32\\cmd.exe /k %windir%\\System32\\reg.exe ADD HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v EnableLUA /t REG_DWORD /d 1 /f')
+os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
