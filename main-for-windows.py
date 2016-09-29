@@ -69,20 +69,24 @@ for character in temp_users:
 users = users[0:len(users)-4]
 
 ############################# User Management #############################
+# Get list of allowed users
 allowed_users = input('What users are allowed? You don\'t have to include yourself. ')
 allowed_users = allowed_users.split(',')
 allowed_users.append(username)
-print(users + 'Are the current users on this machine.')
+# Remove unauthorized users
 for user in users:
     if user not in allowed_users:
         os.system('net user ' + user + ' /delete')
     if user not in users:
         os.system('net user ' + user +  'p@55w0rd /add')
+# Get list of allowed Administrators
 allowed_admins = input('What admins are allowed? Don\'t include yourself again. ')
 allowed_admins = allowed_admins.split(',')
 allowed_admins.append(username)
+# Add allowed Administrators to Administrator group
 for user in allowed_admins:
     os.system('net localgroup Administrators ' + user + ' /add')
+# Remove unauthorized Administrators from Administrator group
 for user in allowed_users:
     if user not in allowed_admins:
         cmd_remove_admin = os.system('net localgroup Administrators ' + user + ' /delete')
@@ -91,36 +95,36 @@ for user in allowed_users:
 # When I'm testing that, things don't go write... Oh well, I'd rather have a bunch of os.system calls and duplicate entries
 # Than have me think something happened when it didn't.
 # Password policy automagic
-os.system('net accounts /FORCELOGOFF:30 /MINPWLEN:8 /MAXPWAGE:30 /MINPWAGE:10 UNIQUEPW:5')
 print('Chaning password policies and such...')
+os.system('net accounts /FORCELOGOFF:30 /MINPWLEN:8 /MAXPWAGE:30 /MINPWAGE:10 UNIQUEPW:5')
 # Automagic updates
+print('Automagic updates are now actualy automagic')
 os.system('reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f')
 os.system('reg add "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" /v NoAutoUpdate /t REG_DWORD /d 0 /f')
-print('Automagic updates are now actualy automagic')
 # Let's turn off that awkward thing called RDP
+print('nice, RDP is now gone')
 os.system('reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 1 /f')
 os.system('reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f')
-print('nice, RDP is now gone')
 # Clean DNS cache, cause why not
-os.system('ipconfig /flushdns')
 print('Bro, I cleaned your DNS cache. Deal with it.')
+os.system('ipconfig /flushdns')
 # Disable leh autorun
-os.system('reg ADD HKCU\SYSTEM\CurrentControlSet\Services\CDROM /v AutoRun /t REG_DWORD /d 1 /f')
 print('RIP autorun')
+os.system('reg ADD HKCU\SYSTEM\CurrentControlSet\Services\CDROM /v AutoRun /t REG_DWORD /d 1 /f')
 # Disable built-in accounts
+print('I really hope you weren\'t the default Administrator account')
 os.system('net user Guest /active:NO')
 os.system('net user Administrator /active:NO')
-print('I really hope you weren\'t the default Administrator account')
 # Clear page file on shutdown
-os.system('reg ADD "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v ClearPageFileAtShutdown /t REG_DWORD /d 1 /f')
 print('Pagefile clears on shutdown. GG')
+os.system('reg ADD "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v ClearPageFileAtShutdown /t REG_DWORD /d 1 /f')
 # Does not reboot if logged on after update installed
-os.system('reg ADD "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /t REG_DWORD /d 1 /f')
 print('Will no longer reboot when logged on, after update is installed')
+os.system('reg ADD "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /t REG_DWORD /d 1 /f')
 # No CTRL+ALT+DELETE on logon
-os.system('reg add "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" /v DisableCAD /t REG_DWORD /d 1 /f')
 print('No CTRL+ALT+DEL on logon')
+os.system('reg add "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" /v DisableCAD /t REG_DWORD /d 1 /f')
 # Make auditing great again.
+print('Auditing now on! Yay!!!!')
 os.system('auditpol /set /category:* /success:enable')
 os.system('auditpol /set /category:* /failure:enable')
-print('Auditing now on! Yay!!!!')
