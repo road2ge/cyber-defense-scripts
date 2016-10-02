@@ -129,16 +129,14 @@ os.system('C:\\Windows\\System32\\cmd.exe /k %windir%\\System32\\reg.exe ADD HKL
 os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
 
 ############################# Search for media files #############################
-def find_all(name, path):
-    result = []
-    for root, dirs, files in os.scandir(path):
-        if name in files:
-            result.append(os.path.join(root, name))
-    return result
-media_list = [find_all('mp3', 'C:\\')]
-media_list += find_all('wav', 'C:\\')
-media_list += find_all('mp4', 'C:\\')
-media_list += find_all('wmv', 'C:\\')
-text_file = open("Output.txt", "w")
-text_file.write(media_list)
+file_list = []
+for root, dirs, files in os.walk('C:\\'):
+    for f_name in files:
+        file_path = os.path.join(root, f_name)
+        for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif'):
+            if file_path.endswith(extension):
+                file_list.append(file_path)
+text_file = open('Output.txt','w')
+for file in file_list:
+    text_file.write(file + "\n")
 text_file.close()
