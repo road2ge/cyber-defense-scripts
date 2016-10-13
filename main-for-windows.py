@@ -62,7 +62,7 @@ users = users[0:len(users)-4]
 
 ############################# User Management #############################
 # Get list of allowed users
-allowed_users = input('What users are allowed? You don\'t have to include yourself. ')
+allowed_users = input('What users are allowed? You don\'t have to include yourself. Enclose in \'s. ')
 allowed_users = allowed_users.split(',')
 allowed_users.append(username)
 # Remove unauthorized users
@@ -74,7 +74,7 @@ for user in users:
         print('Adding user with 1337 p@55w0rd')
         os.system('net user ' + user +  'p@55w0rd /add')
 # Get list of allowed Administrators
-allowed_admins = input('What admins are allowed? Don\'t include yourself again. ')
+allowed_admins = input('What admins are allowed? Don\'t include yourself again. Enclose in \'s. ')
 allowed_admins = allowed_admins.split(',')
 allowed_admins.append(username)
 # Add allowed Administrators to Administrator group
@@ -133,6 +133,7 @@ os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.
 
 ############################# Search for media files #############################
 file_list = []
+directory_to_scan = input('What directory would you like to scan for media files? Remember to enclose your directory in \'s or \"s, and use two \\s for every \\ in your directory. ')
 for root, dirs, files in os.walk('C:\\'):
     for f_name in files:
         file_path = os.path.join(root, f_name)
