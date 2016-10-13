@@ -5,7 +5,7 @@
 import sys
 import ctypes
 
-def run_as_admin(argv=None, debug=False):
+'''def run_as_admin(argv=None, debug=False):
     shell32 = ctypes.windll.shell32
     if argv is None and shell32.IsUserAnAdmin():
         return True
@@ -20,7 +20,7 @@ def run_as_admin(argv=None, debug=False):
     argument_line = u' '.join(arguments)
     executable = unicode(sys.executable)
     if debug:
-        print 'Command line: ', executable, argument_line
+        print('Command line: ', executable, argument_line)
     ret = shell32.ShellExecuteW(None, u"runas", executable, argument_line, None, 1)
     if int(ret) <= 32:
         return False
@@ -34,8 +34,7 @@ if __name__ == '__main__':
         print('I am elevating to admin privilege.')
         raw_input('Press ENTER to exit.')
     else:
-        print('Error(ret=%d): cannot elevate privilege.')
-
+        print('Error(ret=%d): cannot elevate privilege.')'''
 
 from subprocess import call
 from subprocess import check_output
@@ -47,7 +46,7 @@ alpha = 'abcdefghijklmnopqrstuvwxyz'
 numbers = '1234567890'
 alpha_numeric = alpha + alpha.upper() + numbers
 incoming_user = ''
-temp_users = check_output('net user')
+temp_users = str(check_output('net user'))
 times_through = 1
 # " / \ [ ] : ; | = , + * ? < > are the characters not allowed in usernames
 # Get a list of all users on the system
@@ -63,21 +62,24 @@ users = users[0:len(users)-4]
 
 ############################# User Management #############################
 # Get list of allowed users
-allowed_users = raw_input('What users are allowed? You don\'t have to include yourself. ')
+allowed_users = input('What users are allowed? You don\'t have to include yourself. ')
 allowed_users = allowed_users.split(',')
 allowed_users.append(username)
 # Remove unauthorized users
 for user in users:
     if user not in allowed_users:
+        print('Removing ' + user)
         os.system('net user ' + user + ' /delete')
     if user not in users:
+        print('Adding user with 1337 p@55w0rd')
         os.system('net user ' + user +  'p@55w0rd /add')
 # Get list of allowed Administrators
-allowed_admins = raw_input('What admins are allowed? Don\'t include yourself again. ')
+allowed_admins = input('What admins are allowed? Don\'t include yourself again. ')
 allowed_admins = allowed_admins.split(',')
 allowed_admins.append(username)
 # Add allowed Administrators to Administrator group
 for user in allowed_admins:
+    print('Adding ' + user + ' to Administrators group')
     os.system('net localgroup Administrators ' + user + ' /add')
 # Remove unauthorized Administrators from Administrator group
 for user in allowed_users:
@@ -126,7 +128,7 @@ os.system('netsh advfirewall set allprofiles state on')
 # Turn on UAC
 print('UAC = triggered')
 os.system('C:\\Windows\\System32\\cmd.exe /k %windir%\\System32\\reg.exe ADD HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v EnableLUA /t REG_DWORD /d 1 /f')
-print('You\'re going to have to type exit')
+os.system('echo You\'re going to have to type exit')
 os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
 
 ############################# Search for media files #############################
@@ -137,7 +139,7 @@ for root, dirs, files in os.walk('C:\\'):
         for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif'):
             if file_path.endswith(extension):
                 file_list.append(file_path)
-text_file = open('Output.txt','w')
+text_file = open('media_files.txt','w')
 for file in file_list:
     text_file.write(file + "\n")
 text_file.close()
