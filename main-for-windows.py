@@ -28,13 +28,13 @@ def run_as_admin(argv=None, debug=False):
 if __name__ == '__main__':
     ret = run_as_admin()
     if ret is True:
-        print 'I have admin privilege.'
+        print('I have admin privilege.')
         raw_input('Press ENTER to exit.')
     elif ret is None:
-        print 'I am elevating to admin privilege.'
+        print('I am elevating to admin privilege.')
         raw_input('Press ENTER to exit.')
     else:
-        print 'Error(ret=%d): cannot elevate privilege.' % (ret, )
+        print('Error(ret=%d): cannot elevate privilege.')
 
 
 from subprocess import call
