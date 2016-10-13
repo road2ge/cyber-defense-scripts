@@ -63,7 +63,7 @@ users = users[0:len(users)-4]
 
 ############################# User Management #############################
 # Get list of allowed users
-allowed_users = input('What users are allowed? You don\'t have to include yourself. ')
+allowed_users = raw_input('What users are allowed? You don\'t have to include yourself. ')
 allowed_users = allowed_users.split(',')
 allowed_users.append(username)
 # Remove unauthorized users
@@ -73,7 +73,7 @@ for user in users:
     if user not in users:
         os.system('net user ' + user +  'p@55w0rd /add')
 # Get list of allowed Administrators
-allowed_admins = input('What admins are allowed? Don\'t include yourself again. ')
+allowed_admins = raw_input('What admins are allowed? Don\'t include yourself again. ')
 allowed_admins = allowed_admins.split(',')
 allowed_admins.append(username)
 # Add allowed Administrators to Administrator group
@@ -126,6 +126,7 @@ os.system('netsh advfirewall set allprofiles state on')
 # Turn on UAC
 print('UAC = triggered')
 os.system('C:\\Windows\\System32\\cmd.exe /k %windir%\\System32\\reg.exe ADD HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v EnableLUA /t REG_DWORD /d 1 /f')
+print('You\'re going to have to type exit')
 os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
 
 ############################# Search for media files #############################
