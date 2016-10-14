@@ -134,7 +134,7 @@ os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.
 ############################# Search for media files #############################
 file_list = []
 directory_to_scan = input('What directory would you like to scan for media files? Remember to enclose your directory in \'s or \"s, and use two \\s for every \\ in your directory. ')
-for root, dirs, files in os.walk('C:\\'):
+for root, dirs, files in os.walk(directory_to_scan):
     for f_name in files:
         file_path = os.path.join(root, f_name)
         for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif'):
