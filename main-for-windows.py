@@ -121,7 +121,7 @@ command = ('fDisableEncryption','0')
 os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
 ############################# Search for media files #############################
 file_list = []
-directory_to_scan = input('What directory would you like to scan for media files? Remember to enclose your directory in \'s or "s, and use two \s for every \ in your directory. ')
+directory_to_scan = input('What directory would you like to scan for media files? Remember to enclose your directory in \'s or "s, and use two \s if your directory ends in a \. ')
 for root, dirs, files in os.walk(directory_to_scan):
     for f_name in files:
         file_path = os.path.join(root, f_name)
