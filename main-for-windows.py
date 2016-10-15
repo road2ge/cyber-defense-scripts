@@ -63,7 +63,7 @@ def user_management(users):
                         print('Adding ' + user + 'to the Administrators group')
                         os.system('net localgroup Administrators ' + user + ' /add')
 if do_user_management == 'y':
-    user_management(users):
+    user_management(users)
 
 ############################# Registry keys and such #############################
 # Password policy automagic
