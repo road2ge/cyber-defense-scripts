@@ -31,17 +31,17 @@ for character in temp_users:
         incoming_user = ''
         times_through += 1
 users = users[0:len(users)-4]
-print('All the users currently on this computer are ' + users)
+print('All the users currently on this computer are ' + str(users))
 do_user_management = input("Shall we manage users? 'y' or 'n' ")
 def user_management(users):
     def should_be_admin(user):
-        should_be_admin = input(user + "is an administrator. Should they be? 'y' or 'n' ")
+        should_be_admin = input(user + " is an administrator. Should they be? 'y' or 'n' ")
         if should_be_admin == 'y':
             return True
         if should_be_admin == 'n':
             return False
     def should_be_user(user):
-        should_be_user = input(user + "is a user. Should they be? 'y' or 'n' ")
+        should_be_user = input(user + " is a user. Should they be? 'y' or 'n' ")
         if should_be_user == 'y':
             return True
         if should_be_user == 'n':
@@ -53,11 +53,14 @@ def user_management(users):
             if not should_be_admin(user):
                 print('Removing ' + user + ' from the Administrators group')
                 os.system('net localgroup Administrators ' + user + ' /delete')
+            else:
+                print('OK. We are keeping ' + user + ' in the Administrators group.')
         else:
-            if not should_be_user(user):
+            should_be_user_answer = should_be_user(user)
+            if not should_be_user_answer:
                 print('Removing ' + user)
                 os.system('net user ' + user + ' /delete')
-            if should_be_user(user):
+            if should_be_user_answer:
                 if user not in check_output('net localgroup Administrators'):
                     if should_be_admin(user):
                         print('Adding ' + user + 'to the Administrators group')
@@ -108,27 +111,27 @@ print('UAC = triggered')
 os.system('reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 1 /f')
 os.system('echo You\'re going to have to type exit')
 os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
-reg_dir = '"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" '
-for command in (('FilterAdministratorToken','1'),('ConsentPromptBehaviorAdmin','1'),('ConsentPromptBehaviorUser','1'),('EnableInstallerDetection','1'),('ValidateAdminCodeSignatures','1'),('EnableLUA','1'),('PromptOnSecureDesktop','1'),('EnableVirtualization','1'),('EnableVirtualization','1')):
-    os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
-reg_dir = "KEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update"
-for command in (('AUOptions', '4'),('ElevateNonAdmins', '1'),('IncludeRecommendedUpdates', '1'),('ScheduledInstallTime', '22')):
-    os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
-reg_dir = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server'
-for command in (('fDenyTSConnections', '1'),('AllowRemoteRPC', '0')):
-    os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f') 
-reg_dir = 'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Remote Assistance'
-for command in (('fAllowFullControl','0'),('fAllowToGetHelp','0')):
-    os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
-reg_dir = 'HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp'
-command = ('UserAuthentication','1')
-os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
-reg_dir = 'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Remote Assistance'
-command = ('CreateEncryptedOnlyTickets','1')
-os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
-reg_dir = 'HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' 
-command = ('fDisableEncryption','0')
-os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
+reg_dir = '"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\\ '
+for command in (('FilterAdministratorToken"','1'),('ConsentPromptBehaviorAdmin"','1'),('ConsentPromptBehaviorUser"','1'),('EnableInstallerDetection"','1'),('ValidateAdminCodeSignatures"','1'),('EnableLUA"','1'),('PromptOnSecureDesktop"','1'),('EnableVirtualization"','1'),):
+    os.system('reg add ' + reg_dir + ' /v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f') 
+reg_dir = '"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\\'
+for command in (('AUOptions"', '4'),('ElevateNonAdmins"', '1'),('IncludeRecommendedUpdates"', '1'),('ScheduledInstallTime"', '22')):
+    os.system('reg add ' + reg_dir + ' /v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')     
+reg_dir = '"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\\'
+for command in (('fDenyTSConnections"', '1'),('AllowRemoteRPC"', '0')):
+    os.system('reg add ' + reg_dir + ' /v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')      
+reg_dir = '"HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Remote Assistance\\'
+for command in (('fAllowFullControl"','0'),('fAllowToGetHelp"','0')):
+    os.system('reg add ' + reg_dir + ' /v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')  
+reg_dir = '"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\\'
+command = ('UserAuthentication"','1')
+os.system('reg add ' + reg_dir + ' /v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f') 
+reg_dir = '"HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Remote Assistance\\'
+command = ('CreateEncryptedOnlyTickets"','1')
+os.system('reg add ' + reg_dir + ' /v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f') 
+reg_dir = '"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\\' 
+command = ('fDisableEncryption"','0')
+os.system('reg add ' + reg_dir + ' /v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f') 
 ############################# Search for media files #############################
 file_list = []
 directory_to_scan = input('What directory would you like to scan for media files? Remember to enclose your directory in \'s or "s, and use two \s if your directory ends in a \. ')
