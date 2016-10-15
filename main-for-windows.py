@@ -31,32 +31,39 @@ for character in temp_users:
         incoming_user = ''
         times_through += 1
 users = users[0:len(users)-4]
-
-# Get list of allowed users
-allowed_users = input('What users are allowed? You don\'t have to include yourself. Enclose in \'s. ')
-allowed_users = allowed_users.split(',')
-allowed_users.append(username)
-# Remove unauthorized users
-for user in users:
-    if user not in allowed_users:
-        print('Removing ' + user)
-        os.system('net user ' + user + ' /delete')
-    if user not in users:
-        print('Adding user with 1337 p@55w0rd')
-        os.system('net user ' + user +  'p@55w0rd /add')
-# Get list of allowed Administrators
-allowed_admins = input('What admins are allowed? Don\'t include yourself again. Enclose in \'s. ')
-allowed_admins = allowed_admins.split(',')
-allowed_admins.append(username)
-# Add allowed Administrators to Administrator group
-for user in allowed_admins:
-    print('Adding ' + user + ' to Administrators group')
-    os.system('net localgroup Administrators ' + user + ' /add')
-# Remove unauthorized Administrators from Administrator group
-for user in allowed_users:
-    if user not in allowed_admins:
-        cmd_remove_admin = os.system('net localgroup Administrators ' + user + ' /delete')
-        cmd_remove_admin
+print('All the users currently on this computer are ' + users)
+do_user_management = input("Shall we manage users? 'y' or 'n' ")
+def user_management(users):
+    def should_be_admin(user)
+        should_be_admin = input(user + "is an administrator. Should they be? 'y' or 'n' ")
+        if should_be_admin == 'y':
+            return True
+        if should_be_admin == 'n':
+            return False
+    def should_be_user(user):
+        should_be_user = input(user + "is a user. Should they be? 'y' or 'n' ")
+        if should_be_user == 'y':
+            return True
+        if should_be_user == 'n':
+            return False
+    for user in users:
+        # Iterate through user list
+        if user in check_output('net localgroup Administrators'):
+            # If user is in the Administrators localgroup
+            if not should_be_admin(user):
+                print('Removing ' + user + ' from the Administrators group')
+                os.system('net localgroup Administrators ' + user + ' /delete')
+        else:
+            if not should_be_user(user):
+                print('Removing ' + user)
+                os.system('net user ' + user + ' /delete')
+            if should_be_user(user):
+                if user not in check_output('net localgroup Administrators'):
+                    if should_be_admin(user):
+                        print('Adding ' + user + 'to the Administrators group')
+                        os.system('net localgroup Administrators ' + user + ' /add')
+if do_user_management == 'y':
+    user_management(users):
 
 ############################# Registry keys and such #############################
 # Password policy automagic
