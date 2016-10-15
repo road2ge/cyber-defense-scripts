@@ -34,7 +34,7 @@ users = users[0:len(users)-4]
 print('All the users currently on this computer are ' + users)
 do_user_management = input("Shall we manage users? 'y' or 'n' ")
 def user_management(users):
-    def should_be_admin(user)
+    def should_be_admin(user):
         should_be_admin = input(user + "is an administrator. Should they be? 'y' or 'n' ")
         if should_be_admin == 'y':
             return True
