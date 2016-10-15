@@ -1,45 +1,10 @@
 # This script is actually for Cyber Security on Windows 7.  Should mostly work
 # for Windows 8 and 10 too.  I just absolutely hate using Windows 8 and refuse
 # to test it on any Windows 8 machine.
-############################# Check for proper priveleges #############################
-import sys
-import ctypes
-
-'''def run_as_admin(argv=None, debug=False):
-    shell32 = ctypes.windll.shell32
-    if argv is None and shell32.IsUserAnAdmin():
-        return True
-
-    if argv is None:
-        argv = sys.argv
-    if hasattr(sys, '_MEIPASS'):
-        # Support pyinstaller wrapped program.
-        arguments = map(unicode, argv[1:])
-    else:
-        arguments = map(unicode, argv)
-    argument_line = u' '.join(arguments)
-    executable = unicode(sys.executable)
-    if debug:
-        print('Command line: ', executable, argument_line)
-    ret = shell32.ShellExecuteW(None, u"runas", executable, argument_line, None, 1)
-    if int(ret) <= 32:
-        return False
-    return None
-if __name__ == '__main__':
-    ret = run_as_admin()
-    if ret is True:
-        print('I have admin privilege.')
-        raw_input('Press ENTER to exit.')
-    elif ret is None:
-        print('I am elevating to admin privilege.')
-        raw_input('Press ENTER to exit.')
-    else:
-        print('Error(ret=%d): cannot elevate privilege.')'''
-
 from subprocess import call
 from subprocess import check_output
 import os
-
+############################# User Management #############################
 username = os.getenv('username')
 users = []
 alpha = 'abcdefghijklmnopqrstuvwxyz'
@@ -48,19 +13,22 @@ alpha_numeric = alpha + alpha.upper() + numbers
 incoming_user = ''
 temp_users = str(check_output('net user'))
 times_through = 1
+for not_allowed_characters in '"/\[]:;|=,+*?<>':
+    temp_users.replace(not_allowed_characters, '')
+temp_users.replace("\r\n","")
+
 # " / \ [ ] : ; | = , + * ? < > are the characters not allowed in usernames
 # Get a list of all users on the system
 for character in temp_users:
     if character in alpha_numeric or character in "-#\'.!@$%^&()}{":
         incoming_user += character
     elif len(incoming_user) > 0:
-        if times_through > 5 and incoming_user != 'Administrator' and incoming_user != 'Guest':
+        if times_through > 5:
            users.append(incoming_user)
         incoming_user = ''
         times_through += 1
 users = users[0:len(users)-4]
 
-############################# User Management #############################
 # Get list of allowed users
 allowed_users = input('What users are allowed? You don\'t have to include yourself. Enclose in \'s. ')
 allowed_users = allowed_users.split(',')
@@ -127,13 +95,33 @@ print('The firewall torch has been passed on to you')
 os.system('netsh advfirewall set allprofiles state on')
 # Turn on UAC
 print('UAC = triggered')
-os.system('C:\\Windows\\System32\\cmd.exe /k %windir%\\System32\\reg.exe ADD HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v EnableLUA /t REG_DWORD /d 1 /f')
+os.system('reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 1 /f')
 os.system('echo You\'re going to have to type exit')
 os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
-
+reg_dir = '"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" '
+for command in (('FilterAdministratorToken','1'),('ConsentPromptBehaviorAdmin','1'),('ConsentPromptBehaviorUser','1'),('EnableInstallerDetection','1'),('ValidateAdminCodeSignatures','1'),('EnableLUA','1'),('PromptOnSecureDesktop','1'),('EnableVirtualization','1'),('EnableVirtualization','1')):
+    os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+reg_dir = "KEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update"
+for command in (('AUOptions', '4'),('ElevateNonAdmins', '1'),('IncludeRecommendedUpdates', '1'),('ScheduledInstallTime', '22')):
+    os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+reg_dir = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server'
+for command in (('fDenyTSConnections', '1'),('AllowRemoteRPC', '0')):
+    os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+reg_dir = 'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Remote Assistance'
+for command in (('fAllowFullControl','0'),('fAllowToGetHelp','0')):
+    os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+reg_dir = 'HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp'
+command = ('UserAuthentication','1')
+os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+reg_dir = 'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Remote Assistance'
+command = ('CreateEncryptedOnlyTickets','1')
+os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+reg_dir = 'HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' 
+command = ('fDisableEncryption','0')
+os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
 ############################# Search for media files #############################
 file_list = []
-directory_to_scan = input('What directory would you like to scan for media files? Remember to enclose your directory in \'s or \"s, and use two \\s for every \\ in your directory. ')
+directory_to_scan = input('What directory would you like to scan for media files? Remember to enclose your directory in \'s or "s, and use two \s for every \ in your directory. ')
 for root, dirs, files in os.walk(directory_to_scan):
     for f_name in files:
         file_path = os.path.join(root, f_name)
