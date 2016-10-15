@@ -1,6 +1,7 @@
 # This script is actually for Cyber Security on Windows 7.  Should mostly work
 # for Windows 8 and 10 too.  I just absolutely hate using Windows 8 and refuse
 # to test it on any Windows 8 machine.
+from __future__ import print_function
 from subprocess import call
 from subprocess import check_output
 import os
@@ -16,6 +17,8 @@ times_through = 1
 for not_allowed_characters in '"/\[]:;|=,+*?<>':
     temp_users.replace(not_allowed_characters, '')
 temp_users.replace("\r\n","")
+temp_users.replace("\r","")
+temp_users.replace("\n","")
 
 # " / \ [ ] : ; | = , + * ? < > are the characters not allowed in usernames
 # Get a list of all users on the system
@@ -58,7 +61,7 @@ for user in allowed_users:
 ############################# Registry keys and such #############################
 # Password policy automagic
 print('Chaning password policies and such...')
-os.system('net accounts /FORCELOGOFF:30 /MINPWLEN:8 /MAXPWAGE:30 /MINPWAGE:10 UNIQUEPW:5')
+os.system('net accounts /FORCELOGOFF:30 /MINPWLEN:8 /MAXPWAGE:30 /MINPWAGE:10 /UNIQUEPW:5')
 # Automagic updates
 print('Automagic updates are now actualy automagic')
 os.system('reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f')
@@ -100,25 +103,25 @@ os.system('echo You\'re going to have to type exit')
 os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
 reg_dir = '"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" '
 for command in (('FilterAdministratorToken','1'),('ConsentPromptBehaviorAdmin','1'),('ConsentPromptBehaviorUser','1'),('EnableInstallerDetection','1'),('ValidateAdminCodeSignatures','1'),('EnableLUA','1'),('PromptOnSecureDesktop','1'),('EnableVirtualization','1'),('EnableVirtualization','1')):
-    os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+    os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
 reg_dir = "KEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update"
 for command in (('AUOptions', '4'),('ElevateNonAdmins', '1'),('IncludeRecommendedUpdates', '1'),('ScheduledInstallTime', '22')):
-    os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+    os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
 reg_dir = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server'
 for command in (('fDenyTSConnections', '1'),('AllowRemoteRPC', '0')):
-    os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+    os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f') 
 reg_dir = 'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Remote Assistance'
 for command in (('fAllowFullControl','0'),('fAllowToGetHelp','0')):
-    os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+    os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
 reg_dir = 'HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp'
 command = ('UserAuthentication','1')
-os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
 reg_dir = 'HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Remote Assistance'
 command = ('CreateEncryptedOnlyTickets','1')
-os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
 reg_dir = 'HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' 
 command = ('fDisableEncryption','0')
-os.system('reg add ' + reg_dir + '/v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+os.system('reg add ' + reg_dir + command[0] + '/v ' + command[1] + ' /t REG_DWORD /f')
 ############################# Search for media files #############################
 file_list = []
 directory_to_scan = input('What directory would you like to scan for media files? Remember to enclose your directory in \'s or "s, and use two \s if your directory ends in a \. ')
