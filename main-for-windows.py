@@ -6,20 +6,23 @@ from subprocess import call
 from subprocess import check_output
 import os
 ############################# User Management #############################
+# Get username
 username = os.getenv('username')
-users = []
+# Make alphanumeric variable
 alpha = 'abcdefghijklmnopqrstuvwxyz'
 numbers = '1234567890'
 alpha_numeric = alpha + alpha.upper() + numbers
+
+# Initialize important variables
+users = []
 incoming_user = ''
-temp_users = str(check_output('net user'))
 times_through = 1
+temp_users = str(check_output('net user'))
 for not_allowed_characters in '"/\[]:;|=,+*?<>':
     temp_users.replace(not_allowed_characters, '')
 temp_users.replace("\r\n","")
 temp_users.replace("\r","")
 temp_users.replace("\n","")
-
 # " / \ [ ] : ; | = , + * ? < > are the characters not allowed in usernames
 # Get a list of all users on the system
 for character in temp_users:
@@ -30,17 +33,20 @@ for character in temp_users:
            users.append(incoming_user)
         incoming_user = ''
         times_through += 1
+# Remove unnecessary stuff at end
 users = users[0:len(users)-4]
+# Print all users
 print('All the users currently on this computer are ' + str(users))
-do_user_management = input("Shall we manage users? 'y' or 'n'.  ")
 def user_management(users):
     def should_be_admin(user):
+        # Should the user be an admin
         should_be_admin = input(user + " is an administrator. Should they be? 'y' or 'n'.  ")
         if should_be_admin == 'y':
             return True
         if should_be_admin == 'n':
             return False
     def should_be_user(user):
+        # Should the user be a user
         should_be_user = input(user + " is a user. Should they be? 'y' or 'n'.  ")
         if should_be_user == 'y':
             return True
@@ -60,11 +66,13 @@ def user_management(users):
             if not should_be_user_answer:
                 print('Removing ' + user)
                 os.system('net user ' + user + ' /delete')
-            if should_be_user_answer:
+            if should_be_admin(user):
                 if user not in check_output('net localgroup Administrators'):
                     if should_be_admin(user):
                         print('Adding ' + user + 'to the Administrators group')
                         os.system('net localgroup Administrators ' + user + ' /add')
+# Ask if we should do user management stuff.
+do_user_management = input("Shall we manage users? 'y' or 'n'.  ")
 if do_user_management == 'y':
     user_management(users)
 
@@ -137,13 +145,17 @@ if input("Shall we change some registry stuff? 'y' or 'n'. ") == 'y':
 ############################# Search for media files #############################
 if input("Shall we search for media files? 'y' or 'n'. ") == 'y':
     file_list = []
+    # Ask for directory to be scanned.
     directory_to_scan = input('What directory would you like to scan for media files? Remember to enclose your directory in \'s or "s, and use two \s if your directory ends in a \. ')
     for root, dirs, files in os.walk(directory_to_scan):
         for f_name in files:
             file_path = os.path.join(root, f_name)
+            # If the file ends with common media extension, add file path to text_file
             for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif'):
-                if file_path.endswith(extension):
-                    file_list.append(file_path)
+                if root in file_list:
+                    pass
+                else:
+                    file_list.append(root)
     text_file = open('media_files.txt','w')
     for file in file_list:
         text_file.write(file + "\n")
