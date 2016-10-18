@@ -1,3 +1,4 @@
+es (159 sloc)  8.98 KB
 # This script is actually for Cyber Security on Windows 7.  Should mostly work
 # for Windows 8 and 10 too.  I just absolutely hate using Windows 8 and refuse
 # to test it on any Windows 8 machine.
@@ -147,7 +148,8 @@ if input("Shall we search for media files? 'y' or 'n'. ") == 'y':
     file_list = []
     # Ask for directory to be scanned.
     directory_to_scan = input('What directory would you like to scan for media files? Remember to enclose your directory in \'s or "s, and use two \s if your directory ends in a \. ')
-    for root, dirs, files in os.walk(directory_to_scan):
+    # Inefficient but I spent too much time looking how to do this to delete it.
+    '''for root, dirs, files in os.walk(directory_to_scan):
         for f_name in files:
             file_path = os.path.join(root, f_name)
             # If the file ends with common media extension, add file path to text_file
@@ -155,8 +157,12 @@ if input("Shall we search for media files? 'y' or 'n'. ") == 'y':
                 if root in file_list:
                     pass
                 else:
-                    file_list.append(root)
+                    file_list.append(root)'''
+    os.system('dir /s /b ' + directory_to_scan + ' > ' + os.path.dirname(os.path.realpath(__file__)) + 'mediafiles.txt')
+    input_file = open('file_index.txt', 'r')
     text_file = open('media_files.txt','w')
-    for file in file_list:
-        text_file.write(file + "\n")
+    for line in input_file:
+        for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif'):
+            if line.endswith(extension):
+                text_file.write(line + "\n")
     text_file.close()
