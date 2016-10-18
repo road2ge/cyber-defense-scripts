@@ -158,7 +158,7 @@ if input("Shall we search for media files? 'y' or 'n'. ") == 'y':
                     pass
                 else:
                     file_list.append(root)'''
-    os.system('dir /s /b ' + directory_to_scan + ' > ' + os.path.dirname(os.path.realpath(__file__)) + 'mediafiles.txt')
+    os.system('dir /s /b ' + directory_to_scan + ' > %cd%\mediafiles.txt')
     input_file = open('file_index.txt', 'r')
     text_file = open('media_files.txt','w')
     for line in input_file:
