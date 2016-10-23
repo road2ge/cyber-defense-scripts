@@ -1,4 +1,3 @@
-es (159 sloc)  8.98 KB
 # This script is actually for Cyber Security on Windows 7.  Should mostly work
 # for Windows 8 and 10 too.  I just absolutely hate using Windows 8 and refuse
 # to test it on any Windows 8 machine.
@@ -41,14 +40,14 @@ print('All the users currently on this computer are ' + str(users))
 def user_management(users):
     def should_be_admin(user):
         # Should the user be an admin
-        should_be_admin = input(user + " is an administrator. Should they be? 'y' or 'n'.  ")
+        should_be_admin = raw_input(user + " is an administrator. Should they be? y/n.  ")
         if should_be_admin == 'y':
             return True
         if should_be_admin == 'n':
             return False
     def should_be_user(user):
         # Should the user be a user
-        should_be_user = input(user + " is a user. Should they be? 'y' or 'n'.  ")
+        should_be_user = raw_input(user + " is a user. Should they be? y/n.  ")
         if should_be_user == 'y':
             return True
         if should_be_user == 'n':
@@ -73,12 +72,12 @@ def user_management(users):
                         print('Adding ' + user + 'to the Administrators group')
                         os.system('net localgroup Administrators ' + user + ' /add')
 # Ask if we should do user management stuff.
-do_user_management = input("Shall we manage users? 'y' or 'n'.  ")
+do_user_management = raw_input("Shall we manage users? y/n. ")
 if do_user_management == 'y':
     user_management(users)
 
 ############################# Registry keys and such #############################
-if input("Shall we change some registry stuff? 'y' or 'n'. ") == 'y':
+if raw_input("Shall we change some registry stuff? y/n. ") == 'y':
     # Password policy automagic
     print('Chaning password policies and such...')
     os.system('net accounts /FORCELOGOFF:30 /MINPWLEN:8 /MAXPWAGE:30 /MINPWAGE:10 /UNIQUEPW:5')
@@ -144,7 +143,7 @@ if input("Shall we change some registry stuff? 'y' or 'n'. ") == 'y':
     os.system('reg add ' + reg_dir + ' /v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f') 
 
 ############################# Search for media files #############################
-if input("Shall we search for media files? 'y' or 'n'. ") == 'y':
+if raw_input("Shall we search for media files? y/n. ") == 'y':
     file_list = []
     # Ask for directory to be scanned.
     directory_to_scan = input('What directory would you like to scan for media files? Remember to enclose your directory in \'s or "s, and use two \s if your directory ends in a \. ')
@@ -158,11 +157,12 @@ if input("Shall we search for media files? 'y' or 'n'. ") == 'y':
                     pass
                 else:
                     file_list.append(root)'''
-    os.system('dir /s /b ' + directory_to_scan + ' > %cd%\mediafiles.txt')
-    input_file = open('file_index.txt', 'r')
+    os.system('dir /s /b ' + directory_to_scan + ' > allfiles.txt')
+    input_file = open('allfiles.txt', 'r')
     text_file = open('media_files.txt','w')
     for line in input_file:
-        for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif'):
-            if line.endswith(extension):
-                text_file.write(line + "\n")
+        for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif','.bat','.txt'):
+            if line.endswith(extension + '\n'):
+                text_file.write(line)
     text_file.close()
+os.system('pause')
