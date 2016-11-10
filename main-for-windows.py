@@ -152,7 +152,7 @@ if raw_input("Shall we search for media files? y/n. ") == 'y':
         for f_name in files:
             file_path = os.path.join(root, f_name)
             # If the file ends with common media extension, add file path to text_file
-            for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif'):
+            for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.php','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif','.bat','.exe','.zip','.7z'):
                 if root in file_list:
                     pass
                 else:
@@ -161,8 +161,20 @@ if raw_input("Shall we search for media files? y/n. ") == 'y':
     input_file = open('allfiles.txt', 'r')
     text_file = open('media_files.txt','w')
     for line in input_file:
-        for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif','.bat','.txt'):
+        for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif','.bat','.txt','.exe','.zip','.7z','.php','.html'):
             if line.endswith(extension + '\n'):
                 text_file.write(line)
     text_file.close()
-os.system('pause')
+os.system('Available commands are addUser, passwords, and exit.')
+command = raw_input('What would you like to do? ')
+if command == 'addUser':
+	username = raw_input('What is the desired username? ')
+	os.system('net user ' + username + ' P@55w0rd /ADD'
+if command == 'passwords':
+	users_string = str(users).replace('[','')
+	users_string = str(users).replace(']'.'')
+	username = raw_input('The current users on the machine are ' + users_string + '. Who\'s password would you like to change? ')
+    new_password = raw_input('What shall the password be? ')
+	os.system('net user ' + username + ' P@55w0rd')
+if command == 'exit':
+	os.system('pause')
