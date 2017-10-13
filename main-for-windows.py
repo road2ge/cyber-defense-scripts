@@ -12,6 +12,7 @@ username = os.getenv('username')
 alpha = 'abcdefghijklmnopqrstuvwxyz'
 numbers = '1234567890'
 alpha_numeric = alpha + alpha.upper() + numbers
+registry_commands = open("commands.txt", "r")
 
 # Initialize important variables
 users = []
@@ -81,33 +82,13 @@ if raw_input("Shall we change some registry stuff? y/n. ") == 'y':
     # Password policy automagic
     print('Chaning password policies and such...')
     os.system('net accounts /FORCELOGOFF:30 /MINPWLEN:8 /MAXPWAGE:30 /MINPWAGE:10 /UNIQUEPW:5')
-    # Automagic updates
-    print('Automagic updates are now actualy automagic')
-    os.system('reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f')
-    os.system('reg add "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" /v NoAutoUpdate /t REG_DWORD /d 0 /f')
-    # Let's turn off that awkward thing called RDP
-    print('nice, RDP is now gone')
-    os.system('reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 1 /f')
-    os.system('reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f')
     # Clean DNS cache, cause why not
     print('Bro, I cleaned your DNS cache. Deal with it.')
     os.system('ipconfig /flushdns')
-    # Disable leh autorun
-    print('RIP autorun')
-    os.system('reg ADD HKCU\SYSTEM\CurrentControlSet\Services\CDROM /v AutoRun /t REG_DWORD /d 1 /f')
     # Disable built-in accounts
     print('I really hope you weren\'t the default Administrator account')
     os.system('net user Guest /active:NO')
     os.system('net user Administrator /active:NO')
-    # Clear page file on shutdown
-    print('Pagefile clears on shutdown. GG')
-    os.system('reg ADD "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v ClearPageFileAtShutdown /t REG_DWORD /d 1 /f')
-    # Does not reboot if logged on after update installed
-    print('Will no longer reboot when logged on, after update is installed')
-    os.system('reg ADD "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /t REG_DWORD /d 1 /f')
-    # No CTRL+ALT+DELETE on logon
-    print('No CTRL+ALT+DEL on logon')
-    os.system('reg add "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" /v DisableCAD /t REG_DWORD /d 1 /f')
     # Make auditing great again.
     print('Auditing now on! Yay!!!!')
     os.system('auditpol /set /category:* /success:enable')
@@ -115,10 +96,9 @@ if raw_input("Shall we change some registry stuff? y/n. ") == 'y':
     # Enable firewall
     print('The firewall torch has been passed on to you')
     os.system('netsh advfirewall set allprofiles state on')
-    # Turn on UAC
-    print('UAC = triggered')
-    os.system('reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 1 /f')
     os.system('echo You\'re going to have to type exit')
+
+    #I have no idea what I was doing here....
     os.system('secedit /import /db secedit.sdb /cfg cyber.inf /overwrite /log MyLog.txt')
     reg_dir = '"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\\ '
     for command in (('FilterAdministratorToken"','1'),('ConsentPromptBehaviorAdmin"','1'),('ConsentPromptBehaviorUser"','1'),('EnableInstallerDetection"','1'),('ValidateAdminCodeSignatures"','1'),('EnableLUA"','1'),('PromptOnSecureDesktop"','1'),('EnableVirtualization"','1'),):
@@ -140,7 +120,22 @@ if raw_input("Shall we change some registry stuff? y/n. ") == 'y':
     os.system('reg add ' + reg_dir + ' /v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f') 
     reg_dir = '"HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\\' 
     command = ('fDisableEncryption"','0')
-    os.system('reg add ' + reg_dir + ' /v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f') 
+    os.system('reg add ' + reg_dir + ' /v ' + command[0] + ' /t REG_DWORD /d ' + command[1] + ' /f')
+     
+    # I have found additional commands. This one 'might' fix the host file.
+    os.system('attrib -r -s C:\WINDOWS\system32\drivers\etc\hosts')
+    os.system('echo > C:\Windows\System32\drivers\etc\hosts')
+    # This isn't really appropriate for this option, but...
+    os.system('net start > started_services.txt')
+    # Remote registry
+    os.system('net stop RemoteRegistry')
+    os.sytem('sc config RemoteRegistry start=disabled')
+    for service in ('RemoteAccess', 'Telephony', 'tlntsvr', 'p2pimsvc', 'simptcp', 'fax', 'msftpsvc'):
+        os.sytem('net stop ' + service)
+        os.system('sc config ' + service + ' start = disabled')
+    for command in registry_commands.readlines():
+        os.system(command)
+
 
 ############################# Search for media files #############################
 if raw_input("Shall we search for media files? y/n. ") == 'y':
