@@ -129,9 +129,9 @@ if raw_input("Shall we change some registry stuff? y/n. ") == 'y':
     os.system('net start > started_services.txt')
     # Remote registry
     os.system('net stop RemoteRegistry')
-    os.sytem('sc config RemoteRegistry start=disabled')
+    os.system('sc config RemoteRegistry start=disabled')
     for service in ('RemoteAccess', 'Telephony', 'tlntsvr', 'p2pimsvc', 'simptcp', 'fax', 'msftpsvc'):
-        os.sytem('net stop ' + service)
+        os.system('net stop ' + service)
         os.system('sc config ' + service + ' start = disabled')
     for command in registry_commands.readlines():
         os.system(command)
@@ -167,16 +167,16 @@ if raw_input("Shall we search for media files? y/n. ") == 'y':
 
     text_file.close()
     
-os.system('Available commands are addUser, passwords, and exit.')
+print('Available commands are addUser, passwords, and exit.')
 command = raw_input('What would you like to do? ')
 if command == 'addUser':
-	username = raw_input('What is the desired username? ')
-	os.system('net user ' + username + ' P@55w0rd /ADD'
+    username = raw_input('What is the desired username? ')
+    os.system('net user ' + username + ' P@55w0rd /ADD')
 if command == 'passwords':
-	users_string = str(users).replace('[','')
-	users_string = str(users).replace(']'.'')
-	username = raw_input('The current users on the machine are ' + users_string + '. Who\'s password would you like to change? ')
+    users_string = str(users).replace('[','')
+    users_string = str(users).replace(']','')
+    username = raw_input('The current users on the machine are ' + users_string + '. Who\'s password would you like to change? ')
     new_password = raw_input('What shall the password be? ')
-	os.system('net user ' + username + ' P@55w0rd')
+    os.system('net user ' + username + ' P@55w0rd')
 if command == 'exit':
 	os.system('pause')
