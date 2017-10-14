@@ -159,7 +159,14 @@ if raw_input("Shall we search for media files? y/n. ") == 'y':
         for extension in ('.mp3','.wav','.png','wmv','.jpg','.jpeg','.mp4','.avi','.mov','.aif','.iff','.m3u','.m4a','.wma','.m4v','.mpg','.bmp','.gif','.bat','.txt','.exe','.zip','.7z','.php','.html'):
             if line.endswith(extension + '\n'):
                 text_file.write(line)
+    
+    for line in input_file.readlines():
+    	for bad_stuff in ['cain','able','nmap','keylogger','armitage','metasploit','shellter','clean']:
+    		if bad_stuff in line:
+    			text_file.write(line)
+
     text_file.close()
+    
 os.system('Available commands are addUser, passwords, and exit.')
 command = raw_input('What would you like to do? ')
 if command == 'addUser':
