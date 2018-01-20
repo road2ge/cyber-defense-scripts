@@ -1,11 +1,11 @@
 netsh advfirewall firewall set rule name=netcat new enable=no
-netsh advfirewall firewall set rule name=Remote Assistance (DCOM-In) new enable=no
-netsh advfirewall firewall set rule name=Remote Assistance (PNRP-In) new enable=no
-netsh advfirewall firewall set rule name=Remote Assistance (RA Server TCP-In) new enable=no
-netsh advfirewall firewall set rule name=Remote Assistance (SSDP TCP-In) new enable=no
-netsh advfirewall firewall set rule name=Remote Assistance (SSDP UDP-In) new enable=no
-netsh advfirewall firewall set rule name=Remote Assistance (TCP-In) new enable=no
-netsh advfirewall firewall set rule name=Telnet Server new enable=no
+netsh advfirewall firewall set rule name="Remote Assistance (DCOM-In)" new enable=no
+netsh advfirewall firewall set rule name="Remote Assistance (PNRP-In)" new enable=no
+netsh advfirewall firewall set rule name="Remote Assistance (RA Server TCP-In)" new enable=no
+netsh advfirewall firewall set rule name="Remote Assistance (SSDP TCP-In)" new enable=no
+netsh advfirewall firewall set rule name="Remote Assistance (SSDP UDP-In)" new enable=no
+netsh advfirewall firewall set rule name="Remote Assistance (TCP-In)" new enable=no
+netsh advfirewall firewall set rule name="Telnet Server" new enable=no
 echo Y|reg ADD HKCU\Software\Microsoft\Internet Explorer\Download /v RunInvalidSignatures /t REG_DWORD /d 1 /f
 echo Y|reg ADD HKCU\Software\Microsoft\Internet Explorer\Main /v DoNotTrack /t REG_DWORD /d 1 /f
 echo Y|reg ADD HKCU\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_LOCALMACHINE_LOCKDOWN\Settings /v LOCALMACHINE_CD_UNLOCK /t REG_DWORD /d 1 /t /f
